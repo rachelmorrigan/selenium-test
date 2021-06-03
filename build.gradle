@@ -12,12 +12,20 @@ repositories {
 
 dependencies {
     testImplementation group: 'org.testng', name: 'testng', version: '7.4.0'
+    testCompile("org.assertj:assertj-core:3.11.1")
     implementation group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '3.141.59'
 }
 
 test{
     useTestNG()
 }
+
+task miltipleBrowsersTest(type: Test){
+    useTestNG() {
+        suites "/src/test/resources/testng.xml"
+    }
+}
+
 tasks.withType(JavaCompile){
     options.encoding = 'UTF-8'
 }
