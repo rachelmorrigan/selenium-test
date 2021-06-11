@@ -12,12 +12,13 @@ import java.util.concurrent.TimeUnit;
 
 public class AdminBase {
     protected WebDriver webDriver;
+    protected WebDriverWait wait;
 
     @BeforeTest
     public void beforeTest(){
         webDriver = new ChromeDriver();
         webDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-        WebDriverWait wait = new WebDriverWait(webDriver, 10);
+        wait = new WebDriverWait(webDriver, 10);
         webDriver.get("http://localhost/litecart/admin/");
         webDriver.findElement(By.name("username")).sendKeys("admin");
         webDriver.findElement(By.name("password")).sendKeys("admin");

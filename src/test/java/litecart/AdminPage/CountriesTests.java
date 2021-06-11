@@ -3,6 +3,8 @@ package litecart.AdminPage;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.AfterTest;
@@ -14,13 +16,14 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class CountriesTests extends AdminBase {
 
     @Test
-    public void checkCountries(){
+    public void checkCountries() {
         webDriver.get("http://localhost/litecart/admin/?app=countries&doc=countries");
         List<WebElement> countries = webDriver.findElements(By.xpath("//form[@name='countries_form']//tr[@class='row']/td[5]"));
         List<String> names = countries.stream().map(WebElement::getText).collect(Collectors.toList());
@@ -48,9 +51,31 @@ public class CountriesTests extends AdminBase {
         });
     }
 
-    private void checkAlphabeticalOrder(List<String> listToCheck){
+    @Test
+    public void checkCountryLinks() {
+        webDriver.get("http://localhost/litecart/admin/?app=countries&doc=countries");
+        webDriver.findElement(By.cssSelector("a[title='Edit']")).click();
+        String mainWindowId = webDriver.getWindowHandle();
+        Set<String> oldWindows = webDriver.getWindowHandles();
+        webDriver.findElements(By.cssSelector("i.fa.fa-external-link")).forEach(link -> {
+            link.click();
+            String newWindowId = wait.until(numberOfWindowsHasChanged(oldWindows));
+            webDriver.switchTo().window(newWindowId).close();
+            webDriver.switchTo().window(mainWindowId);
+        });
+    }
+
+    private void checkAlphabeticalOrder(List<String> listToCheck) {
         List<String> listToCompare = new ArrayList<>(listToCheck);
         listToCompare.sort(Comparator.naturalOrder());
         assert listToCheck.equals(listToCompare) : "Страны расположены не в алфавитном порядке";
+    }
+
+    private ExpectedCondition<String> numberOfWindowsHasChanged(final Set<String> oldWindows) {
+        return input -> {
+            Set<String> newWindows = webDriver.getWindowHandles();
+            newWindows.removeAll(oldWindows);
+            return (newWindows.size() > 0) ? newWindows.iterator().next() : null;
+        };
     }
 }
