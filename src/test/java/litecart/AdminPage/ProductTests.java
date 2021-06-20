@@ -3,11 +3,16 @@ package litecart.AdminPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.logging.LogEntry;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.testng.annotations.Test;
 
 import java.io.File;
 import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ProductTests extends AdminBase {
 
@@ -48,5 +53,21 @@ public class ProductTests extends AdminBase {
         webDriver.findElement(By.name("save")).click();
         assert webDriver.findElements(By.cssSelector("table.dataTable tr.row a"))
                 .stream().map(WebElement::getText).anyMatch(x -> x.equals(productName)) : "Нового продукта нет в каталоге";
+    }
+
+    @Test
+    public void checkProductsLogsTest() {
+        webDriver.get("http://localhost/litecart/admin/?app=catalog&doc=catalog&category_id=1");
+        List<String> links = webDriver.findElements(By.xpath("//table[@class='dataTable']//td[3]/a[contains(@href,'category_id=1')]")).stream().map(x -> x.getAttribute("href")).collect(Collectors.toList());
+        links.forEach(link ->{
+            webDriver.get(link);
+            wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("div#tab-general")));
+            List<LogEntry> logs = webDriver.manage().logs().get("browser").getAll();
+            if (logs.size()>0){
+            for (LogEntry l : webDriver.manage().logs().get("browser").getAll()) {
+                System.out.println(l);
+            }
+            throw new AssertionError("Найдены ошибки в логе браузера");
+        }});
     }
 }

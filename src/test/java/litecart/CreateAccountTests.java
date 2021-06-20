@@ -2,6 +2,7 @@ package litecart;
 
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
@@ -21,7 +22,7 @@ public class CreateAccountTests {
         wait = new WebDriverWait(webDriver, 10);
     }
 
-    @Test(enabled = false)
+    @Test
     public void createNewAccountTest() {
         webDriver.get("http://localhost/litecart/en/create_account");
         wait.until(webDriver -> ((JavascriptExecutor)webDriver).executeScript("return document.readyState").equals("complete"));
@@ -38,10 +39,15 @@ public class CreateAccountTests {
         webDriver.findElement(By.name("phone")).sendKeys("+12345678999");
         webDriver.findElement(By.name("password")).sendKeys("pass");
         webDriver.findElement(By.name("confirmed_password")).sendKeys("pass");
-        WebElement selectZone = webDriver.findElement(By.name("zone_code"));
-//        selectZone.click();
-        selectZone.findElement(By.cssSelector("option[value='NY']")).click();
         webDriver.findElement(By.name("create_account")).click();
+        WebElement selectZone = webDriver.findElement(By.name("zone_code"));
+        selectZone.click();
+        selectZone.findElement(By.cssSelector("option[value='NY']")).click();
+        webDriver.findElement(By.name("password")).sendKeys("pass");
+        webDriver.findElement(By.name("confirmed_password")).sendKeys("pass");
+        webDriver.findElement(By.name("create_account")).click();
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("div.notice.success")));
+        webDriver.findElement(By.xpath("//a[.='Logout']")).click();
     }
 
     @AfterTest
