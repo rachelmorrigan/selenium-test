@@ -35,10 +35,12 @@ public class CreateAccountTests {
         WebElement selectCountry = webDriver.findElement(By.className("select2-search__field"));
         selectCountry.sendKeys("United States");
         selectCountry.sendKeys(Keys.ENTER);
-        webDriver.findElement(By.name("email")).sendKeys("test" + ZonedDateTime.now().toEpochSecond() + "@gmail.com");
+        String email = "test" + ZonedDateTime.now().toEpochSecond() + "@gmail.com";
+        String password = "pass";
+        webDriver.findElement(By.name("email")).sendKeys(email);
         webDriver.findElement(By.name("phone")).sendKeys("+12345678999");
-        webDriver.findElement(By.name("password")).sendKeys("pass");
-        webDriver.findElement(By.name("confirmed_password")).sendKeys("pass");
+        webDriver.findElement(By.name("password")).sendKeys(password);
+        webDriver.findElement(By.name("confirmed_password")).sendKeys(password);
         webDriver.findElement(By.name("create_account")).click();
         WebElement selectZone = webDriver.findElement(By.name("zone_code"));
         selectZone.click();
@@ -46,6 +48,11 @@ public class CreateAccountTests {
         webDriver.findElement(By.name("password")).sendKeys("pass");
         webDriver.findElement(By.name("confirmed_password")).sendKeys("pass");
         webDriver.findElement(By.name("create_account")).click();
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("div.notice.success")));
+        webDriver.findElement(By.xpath("//a[.='Logout']")).click();
+        webDriver.findElement(By.cssSelector("input[name='email']")).sendKeys(email);
+        webDriver.findElement(By.cssSelector("input[name='password']")).sendKeys(password);
+        webDriver.findElement(By.cssSelector("button[name='login']")).click();
         wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("div.notice.success")));
         webDriver.findElement(By.xpath("//a[.='Logout']")).click();
     }
