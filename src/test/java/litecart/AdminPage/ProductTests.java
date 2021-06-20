@@ -59,15 +59,16 @@ public class ProductTests extends AdminBase {
     public void checkProductsLogsTest() {
         webDriver.get("http://localhost/litecart/admin/?app=catalog&doc=catalog&category_id=1");
         List<String> links = webDriver.findElements(By.xpath("//table[@class='dataTable']//td[3]/a[contains(@href,'category_id=1')]")).stream().map(x -> x.getAttribute("href")).collect(Collectors.toList());
-        links.forEach(link ->{
+        links.forEach(link -> {
             webDriver.get(link);
             wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("div#tab-general")));
             List<LogEntry> logs = webDriver.manage().logs().get("browser").getAll();
-            if (logs.size()>0){
-            for (LogEntry l : webDriver.manage().logs().get("browser").getAll()) {
-                System.out.println(l);
+            if (logs.size() > 0) {
+                for (LogEntry l : webDriver.manage().logs().get("browser").getAll()) {
+                    System.out.println(l);
+                }
+                throw new AssertionError("Найдены ошибки в логе браузера");
             }
-            throw new AssertionError("Найдены ошибки в логе браузера");
-        }});
+        });
     }
 }
