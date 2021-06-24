@@ -29,8 +29,8 @@ public class MainPageTests {
     @Test
     public void checkProducts(){
         webDriver.get("http://localhost/litecart/");
-        webDriver.findElements(By.cssSelector("div.content div.box li.product.column.shadow.hover-light")).forEach(webElement -> {
-            List<WebElement> webElements = webElement.findElements(By.cssSelector("a div.image-wrapper div[class ^=sticker]"));
+        webDriver.findElements(By.cssSelector(".products .image-wrapper")).forEach(webElement -> {
+            List<WebElement> webElements = webElement.findElements(By.cssSelector("div[class ^=sticker]"));
             assert webElements.size() == 1 : "Кол-во стикеров на товаре не равно 1";
         });
     }
