@@ -1,9 +1,10 @@
 package litecart;
 
+import litecart.Pages.CartPage;
+import litecart.Pages.MainPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
@@ -56,6 +57,20 @@ public class MainPageTests {
                     By.xpath("//div[@id='order_confirmation-wrapper']//td[@class='item'][.='" +itemName+ "']"));
             item.findElement(By.name("remove_cart_item")).click();
             wait.until(ExpectedConditions.stalenessOf(dtaTableItem));
+        });
+    }
+
+    @Test
+    public void checkCartNew(){
+        Application application = new Application(webDriver);
+        IntStream.range(0,3).forEach((x) ->{
+            MainPage mainPage = application.openMainPage();
+            List<WebElement> products = mainPage.getAllMostPopularProducts();
+            mainPage.openProductPage(products.get(x)).addItemToCart(1);
+        });
+        CartPage cartPage = application.openCartPage();
+        cartPage.getAllProductsInCart().forEach((x) -> {
+            cartPage.deleteProduct(cartPage.getAllProductsInCart().get(0));
         });
     }
 
